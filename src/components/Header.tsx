@@ -1,18 +1,19 @@
 // src/components/Header.tsx
 
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, IconButton, Avatar } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Avatar, Button } from '@mui/material'; // 'Button' ainda importado, mas não usado diretamente para o logout
 import { AccountCircle } from '@mui/icons-material';
+import LogoutIcon from '@mui/icons-material/Logout'; // Ícone de Logout importado
 import { useNavigate } from 'react-router-dom';
 
-import logoImage from '../assets/logo3.png';
+import logoImage from '../assets/logo3.png'; // Caminho para a imagem da sua logo
 
 const Header = () => {
   const navigate = useNavigate();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [userInitial, setUserInitial] = useState<string>('');
 
-  // Função para carregar a foto e inicial do usuário do localStorage
+  // Função para carregar a foto e a inicial do usuário do localStorage
   const loadProfileData = () => {
     const storedProfilePicture = localStorage.getItem('profilePicture');
     const storedUserData = localStorage.getItem('userData');
@@ -26,7 +27,7 @@ const Header = () => {
     if (storedProfilePicture) {
       setProfilePicture(storedProfilePicture);
     } else {
-      setProfilePicture(null);
+      setProfilePicture(null); // Garante que não haja foto antiga se a nova for removida
     }
 
     if (storedUserData) {
@@ -46,50 +47,63 @@ const Header = () => {
     }
   };
 
+  // useEffect para carregar dados na montagem e ouvir eventos de atualização
   useEffect(() => {
-    loadProfileData(); // Carrega os dados na montagem inicial
+    loadProfileData(); // Carrega os dados na montagem inicial do componente
 
-    // Handler do evento customizado
+    // Handler do evento customizado 'profileUpdate'
     const handleProfileUpdate = () => {
       console.log('Header: Evento "profileUpdate" recebido! Recarregando dados...');
-      loadProfileData(); // Rerecarrega os dados do localStorage
+      loadProfileData(); // Rerecarrega os dados do localStorage quando o evento é disparado
     };
 
-    // --- PONTO CRÍTICO: ADICIONAR O OUVINTE DO EVENTO ---
-    // Assegura que o tipo de função está correto para o addEventListener
+    // Adiciona o ouvinte do evento customizado na janela global
     window.addEventListener('profileUpdate', handleProfileUpdate as EventListener);
 
+    // Função de limpeza: remove o ouvinte ao desmontar o componente
     return () => {
-      // Limpa o ouvinte ao desmontar o componente para evitar vazamento de memória
       window.removeEventListener('profileUpdate', handleProfileUpdate as EventListener);
     };
-  }, []); // Array de dependências vazio para rodar apenas uma vez na montagem/desmontagem
+  }, []);
+
+  // Função para lidar com o Logout
+  const handleLogout = () => {
+    // Limpa os dados do usuário e de projetos do localStorage
+    localStorage.removeItem('userData');
+    localStorage.removeItem('profilePicture');
+    localStorage.removeItem('projects'); // Remova esta linha se os projetos não devem ser limpos no logout
+
+    // Redireciona o usuário para a tela de login (que é a rota '/')
+    navigate('/login');
+    console.log("Usuário deslogado. Dados do localStorage limpos.");
+  };
 
   return (
     <AppBar
-      position="static"
+      position="static" // Permanece no topo da página ao rolar
       sx={{
-        backgroundColor: '#000019',
-        height: '64px',
-        minHeight: '64px',
+        backgroundColor: '#000019', // Cor de fundo do cabeçalho
+        height: '64px', // Altura fixa para o cabeçalho
+        minHeight: '64px', // Garante que a altura mínima também seja respeitada
       }}
     >
       <Toolbar
         sx={{
-          height: '100%',
-          minHeight: 'auto',
+          height: '100%', // Faz com que a Toolbar ocupe toda a altura do AppBar
+          minHeight: 'auto', // Sobrescreve o min-height padrão da Toolbar para se ajustar ao AppBar
         }}
       >
+        {/* Ícone da Logo - Clicável para navegar para a Home */}
         <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="home"
-          sx={{ mr: 2 }}
-          onClick={() => navigate('/home')}
+          edge="start" // Alinha à esquerda da Toolbar
+          color="inherit" // Herda a cor do AppBar
+          aria-label="home" // Rótulo para acessibilidade
+          sx={{ mr: 2 }} // Margem à direita
+          onClick={() => navigate('/home')} // Navega para a Home ao clicar
         >
           <img
-            src={logoImage}
-            alt="StudyFlow Logo"
+            src={logoImage} // Fonte da imagem da logo
+            alt="StudyFlow Logo" // Texto alternativo para acessibilidade
             style={{
               height: 'auto',
               width: '200px',
@@ -98,25 +112,34 @@ const Header = () => {
           />
         </IconButton>
 
+        {/* Ícone de usuário no canto direito */}
         <IconButton
           color="inherit"
           onClick={() => navigate('/edit-profile')}
-          sx={{ ml: 'auto' }}
+          sx={{ ml: 'auto' }} // Empurra o ícone do usuário (e o de Logout que vem depois) para a direita
         >
           <Avatar
             sx={{ width: 32, height: 32 }}
-            src={profilePicture || undefined} // Usa a imagem Base64 como src
+            src={profilePicture || undefined}
             onError={(e) => {
-              // Este callback é acionado se a imagem definida em 'src' falhar ao carregar.
               console.error("Erro ao carregar a imagem de perfil no Header:", e);
-              // Força a exibição da inicial ou do ícone padrão
-              setProfilePicture(null); // Limpa o src para que o children seja renderizado
+              setProfilePicture(null);
             }}
           >
-            {/* Exibe a inicial do nome OU o ícone AccountCircle se não houver foto válida/carregável */}
             {userInitial || <AccountCircle />}
           </Avatar>
         </IconButton>
+
+        {/* --- Ícone de Logout (apenas ícone) --- */}
+        <IconButton
+          color="inherit"
+          onClick={handleLogout}
+          sx={{ ml: 1 }} // Margem à esquerda para separar do ícone do usuário
+          aria-label="logout" // Rótulo para acessibilidade
+        >
+          <LogoutIcon /> {/* O ícone de Logout */}
+        </IconButton>
+        {/* --- Fim do Ícone de Logout --- */}
       </Toolbar>
     </AppBar>
   );
