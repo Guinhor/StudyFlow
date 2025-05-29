@@ -1,7 +1,7 @@
 // src/App.tsx
 
 import { Outlet, useLocation } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Box } from '@mui/material'; // Importado Box
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import theme from './styles/theme';
 import Header from './components/Header';
 import Footer from './components/Footer'; // Importe o componente Footer
@@ -9,10 +9,16 @@ import Footer from './components/Footer'; // Importe o componente Footer
 function App() {
   const location = useLocation();
 
-  const noHeaderPaths = ['/login', '/register'];
+  // Rotas onde o Header NÃO deve aparecer
+  const noHeaderPaths = ['/', '/register'];
   const showHeader = !noHeaderPaths.includes(location.pathname);
 
-  // --- Ajustes para o layout do Footer "grudar" na parte inferior ---
+  // Rotas onde o Footer NÃO deve aparecer
+  // Adicionamos '/login' aqui. Você pode adicionar '/register' se quiser.
+  const noFooterPaths = ['/', '/register'];
+  const showFooter = !noFooterPaths.includes(location.pathname);
+
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -27,11 +33,12 @@ function App() {
         {showHeader && <Header />} {/* O Header só aparece em certas rotas */}
 
         {/* O Outlet renderiza o conteúdo da rota atual */}
-        <Box component="main" sx={{ flexGrow: 1 }}> {/* Faz o conteúdo principal preencher o espaço */}
+        <Box component="main" sx={{ flexGrow: 1 }}>
           <Outlet />
         </Box>
 
-        <Footer /> {/* Adicione o Footer aqui */}
+        {/* Renderiza o Footer apenas se showFooter for true */}
+        {showFooter && <Footer />}
       </Box>
     </ThemeProvider>
   );

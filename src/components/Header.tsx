@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, IconButton, Avatar, Button } from '@mui/material'; // 'Button' ainda importado, mas não usado diretamente para o logout
+import { AppBar, Toolbar, IconButton, Avatar } from '@mui/material'; // 'Button' ainda importado, mas não usado diretamente para o logout
 import { AccountCircle } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout'; // Ícone de Logout importado
 import { useNavigate } from 'react-router-dom';
@@ -74,7 +74,7 @@ const Header = () => {
     localStorage.removeItem('projects'); // Remova esta linha se os projetos não devem ser limpos no logout
 
     // Redireciona o usuário para a tela de login (que é a rota '/')
-    navigate('/login');
+    navigate('/');
     console.log("Usuário deslogado. Dados do localStorage limpos.");
   };
 
