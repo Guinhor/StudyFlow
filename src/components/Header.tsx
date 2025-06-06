@@ -1,9 +1,10 @@
 // src/components/Header.tsx
 
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, IconButton, Avatar, Button } from '@mui/material';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { AppBar, Toolbar, IconButton, Avatar, Button } from '@mui/material'; // 'Button' importado
 import { AccountCircle } from '@mui/icons-material';
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from '@mui/icons-material/Logout'; // Ícone de Logout importado
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types/types'; // <-- CRUCIAL: Importar a interface User
 
@@ -18,7 +19,7 @@ const Header = () => {
   // Função para carregar a foto e a inicial do usuário do localStorage
   const loadProfileData = () => {
     const storedLoggedInUser = localStorage.getItem('loggedInUser');
-    const storedProfilePictures = localStorage.getItem('profilePictures');
+    const storedProfilePictures = localStorage.getItem('profilePictures'); // Nova chave para o mapa de fotos
 
     console.log('Header - Carregando dados para o usuário logado:');
     console.log('  storedLoggedInUser:', storedLoggedInUser ? storedLoggedInUser.substring(0, 50) + '...' : null);
@@ -28,10 +29,10 @@ const Header = () => {
     if (storedLoggedInUser) {
       try {
         parsedLoggedInUser = JSON.parse(storedLoggedInUser);
-        setLoggedInUser(parsedLoggedInUser); // <-- CORREÇÃO: Usar o setter do estado
+        setLoggedInUser(parsedLoggedInUser); // Atualiza o estado do usuário logado
       } catch (e) {
         console.error('Header: Erro ao parsear loggedInUser do localStorage', e);
-        setLoggedInUser(null); // <-- CORREÇÃO: Usar o setter do estado para limpar em caso de erro
+        setLoggedInUser(null); // Limpa o estado em caso de erro
         parsedLoggedInUser = null; // Limpa a variável temporária também
       }
     } else {
@@ -91,14 +92,11 @@ const Header = () => {
     // 'users', 'projects' e 'profilePictures' PERMANECEM no localStorage
     // Isso garante que os dados do usuário NÃO sejam apagados ao fazer logout.
 
-    navigate('/'); // Redireciona para a tela de login
+    navigate('/'); // <-- Redireciona para a tela de login (que é a rota '/')
     console.log("Usuário deslogado. Dados de sessão limpos. Dados persistentes mantidos.");
-    // Opcional: Se o Header precisa de um reset imediato, pode disparar o evento, mas a navegação já causará uma re-renderização.
-    // window.dispatchEvent(new CustomEvent('profileUpdate'));
   };
 
   // O ícone de usuário e de logout só aparecerão se houver um usuário logado
-  // A verificação 'loggedInUser' no JSX agora usa o estado atualizado.
   const isUserLoggedIn = loggedInUser !== null;
 
 

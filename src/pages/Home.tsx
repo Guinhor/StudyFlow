@@ -1,7 +1,8 @@
 // src/pages/Home.tsx
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useNavigate, useLocation } from 'react-router-dom'; // useLocation pode ser removido se não houver uso futuro
 import {
   Box,
   Button,
@@ -15,7 +16,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress,
+  CircularProgress, // <-- Importado CircularProgress
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -24,7 +25,7 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-import { Project, User } from '../types/types'; // Importar Project e User do types.ts
+import { Project, User } from '../types/types'; // <-- CRUCIAL: Importar Project e User do types.ts
 
 const ProjectCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -44,38 +45,54 @@ const StatusChip = styled(Chip)(({ theme }) => ({
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
+  // const location = useLocation(); // Comente ou remova se não for mais usar para location.state
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]); // Não inicializa mais do localStorage diretamente aqui
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
+  // --- Estados para usuário logado e carregamento ---
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Começa como true enquanto carrega os dados
+  // --- Fim dos novos estados ---
 
+  // --- useEffect para carregar dados do usuário logado e projetos ---
   useEffect(() => {
     const storedLoggedInUser = localStorage.getItem('loggedInUser');
     if (storedLoggedInUser) {
       try {
         const user: User = JSON.parse(storedLoggedInUser);
-        setLoggedInUser(user);
+        setLoggedInUser(user); // Define o usuário logado
 
         const storedProjects = localStorage.getItem('projects');
         if (storedProjects) {
           const allProjects: Project[] = JSON.parse(storedProjects);
+          // --- FILTRAR PROJETOS PELO ID DO USUÁRIO LOGADO ---
           const filteredProjects = allProjects.filter(p => p.authorId === user.id);
-          setProjects(filteredProjects);
+          setProjects(filteredProjects); // Define os projetos do usuário logado
         } else {
-          setProjects([]);
+          setProjects([]); // Nenhum projeto encontrado
         }
       } catch (e) {
         console.error("Erro ao parsear loggedInUser ou projetos no Home:", e);
-        navigate('/');
+        navigate('/'); // <-- Redireciona para /login (consistente com o App.tsx)
       }
     } else {
-      navigate('/');
+      navigate('/'); // <-- Redireciona para o login se não houver usuário logado
     }
-    setLoading(false);
-  }, [navigate]);
+    setLoading(false); // Conclui o carregamento, independentemente do sucesso
+  }, [navigate]); // navigate como dependência
+
+  // O useEffect abaixo foi removido (era do 'location.state' para newProject)
+  // useEffect(() => {
+  //   const newProject = location.state?.newProject;
+  //   if (newProject) {
+  //     const updatedProjects = [...projects, newProject];
+  //     setProjects(updatedProjects);
+  //     localStorage.setItem('projects', JSON.stringify(updatedProjects));
+  //     window.history.replaceState({}, document.title);
+  //   }
+  // }, [location.state]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -97,14 +114,20 @@ export const Home: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (projectToDelete) {
+      // --- Lógica de exclusão que persiste no localStorage ---
       const stored = localStorage.getItem('projects');
       const allProjects: Project[] = stored ? JSON.parse(stored) : [];
       
+      // Filtra TODOS os projetos para remover o que pertence ao usuário logado
+      // E tem o ID correto (para não apagar projeto de outra pessoa)
       const updatedAllProjects = allProjects.filter((p) => p.id !== projectToDelete || p.authorId !== loggedInUser?.id);
       
+      // Atualiza o localStorage com a lista completa de projetos
       localStorage.setItem('projects', JSON.stringify(updatedAllProjects));
       
+      // Atualiza o estado local 'projects' que é filtrado para o usuário atual
       setProjects(updatedAllProjects.filter(p => p.authorId === loggedInUser?.id));
+      // --- Fim da lógica de exclusão ---
 
       setOpenDeleteDialog(false);
       setProjectToDelete(null);
@@ -116,6 +139,7 @@ export const Home: React.FC = () => {
     setProjectToDelete(null);
   };
 
+  // --- Exibir estado de carregamento ---
   if (loading || !loggedInUser) {
     return (
       <Box sx={{
@@ -134,6 +158,7 @@ export const Home: React.FC = () => {
     );
   }
 
+  // --- Conteúdo da página Home após carregamento ---
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Box
@@ -229,14 +254,8 @@ export const Home: React.FC = () => {
             </div>
           ))
         ) : (
-          // --- AQUI ESTÁ A ALTERAÇÃO: Renderiza 'null' quando não há projetos ---
+          // Renderiza 'null' quando não há projetos (texto "Nenhum projeto encontrado" foi removido)
           null
-          // Se quiser adicionar um componente vazio ou um Box, pode fazer assim:
-          // <Box sx={{ width: '100%', textAlign: 'center', mt: 4 }}>
-          //   <Typography variant="h6" color="textSecondary">
-          //     Nenhum projeto para exibir.
-          //   </Typography>
-          // </Box>
         )}
       </div>
 

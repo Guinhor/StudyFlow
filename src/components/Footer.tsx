@@ -4,8 +4,9 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-// Define a altura do footer como uma constante para ser reutilizada em App.tsx
-export const FOOTER_HEIGHT = '50px'; // <-- Nova constante de altura
+// --- VERIFIQUE ESTA LINHA ---
+export const FOOTER_HEIGHT = '50px'; // <-- Esta linha deve estar aqui!
+// --- FIM DA VERIFICAÇÃO ---
 
 const Footer: React.FC = () => {
   const theme = useTheme();
@@ -17,19 +18,18 @@ const Footer: React.FC = () => {
       sx={{
         backgroundColor: '#000019',
         color: theme.palette.common.white,
-        padding: theme.spacing(1), // Espaçamento interno menor para um footer fixo
+        padding: theme.spacing(1),
         textAlign: 'center',
         width: '100%',
-        height: FOOTER_HEIGHT, // <-- Altura fixa definida
-        position: 'fixed', // <-- Torna o footer fixo na viewport
-        bottom: 0, // <-- Alinha à parte inferior da viewport
-        left: 0, // <-- Alinha à esquerda da viewport
-        zIndex: theme.zIndex.appBar - 1, // <-- Garante que esteja acima do conteúdo, mas abaixo do AppBar (se ele fosse fixo também)
-                                         // Um zIndex alto como 1000 também funcionaria
-        boxShadow: '0 -2px 5px rgba(0,0,0,0.2)' // Opcional: uma leve sombra superior
+        height: FOOTER_HEIGHT,
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        zIndex: theme.zIndex.appBar - 1,
+        boxShadow: '0 -2px 5px rgba(0,0,0,0.2)'
       }}
     >
-      <Typography variant="body2" sx={{ lineHeight: '32px' }}> {/* Ajusta o line-height para centralizar texto verticalmente se o padding não for suficiente */}
+      <Typography variant="body2" sx={{ lineHeight: '32px' }}>
         &copy; {currentYear} StudyFlow. Todos os direitos reservados.
       </Typography>
     </Box>

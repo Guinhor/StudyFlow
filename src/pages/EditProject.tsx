@@ -13,6 +13,7 @@ import {
   InputLabel,
   FormControl,
   SelectChangeEvent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IconButton, // <-- Importar IconButton para o botão de anexo
 } from '@mui/material';
 
@@ -30,20 +31,20 @@ export const EditProject: React.FC = () => {
     subject: '',
     status: 'Rascunho',
     summary: '',
-    authorId: '', // <-- NOVO: Inicializa o authorId
+    authorId: '', // <-- Inicializa o authorId
     author: '',
     updatedAt: '',
     avatarColor: '',
-    attachedFileNames: [], // <-- NOVO: Inicializa como array vazio
+    attachedFileNames: [], // <-- Inicializa como array vazio
   });
 
   // Estado para o arquivo anexado (objeto File, usado para o preview de um novo anexo)
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
-  // --- NOVO: Estado para armazenar o usuário logado ---
+  // --- Estado para armazenar o usuário logado ---
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
-  // --- NOVO: useEffect para carregar o usuário logado ---
+  // --- useEffect para carregar o usuário logado ---
   useEffect(() => {
     const storedLoggedInUser = localStorage.getItem('loggedInUser');
     if (storedLoggedInUser) {
@@ -52,10 +53,10 @@ export const EditProject: React.FC = () => {
         setLoggedInUser(user);
       } catch (e) {
         console.error("Erro ao parsear loggedInUser no EditProject:", e);
-        navigate('/'); // Redireciona se os dados estiverem corrompidos
+        navigate('/'); // <-- Redireciona para / (consistente com o App.tsx)
       }
     } else {
-      navigate('/'); // Redireciona para o login se não houver usuário logado
+      navigate('/'); // <-- Redireciona para /
     }
   }, [navigate]); // navigate como dependência
 
@@ -102,7 +103,7 @@ export const EditProject: React.FC = () => {
     setProjectData(prev => ({ ...prev, [name as string]: value }));
   };
 
-  // --- NOVO: handleFileChange para attachedFileNames (array) ---
+  // --- handleFileChange para attachedFileNames (array) ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
@@ -119,10 +120,10 @@ export const EditProject: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // --- NOVO: Verificar se o usuário está logado antes de salvar ---
+    // --- Verificar se o usuário está logado antes de salvar ---
     if (!loggedInUser) {
         alert("Você precisa estar logado para salvar as alterações.");
-        navigate('/');
+        navigate('/'); // <-- Redireciona para /
         return;
     }
 
@@ -160,7 +161,7 @@ export const EditProject: React.FC = () => {
     navigate('/home');
   };
 
-  // --- NOVO: Exibir estado de carregamento se o usuário ou projeto não carregou ---
+  // --- Exibir estado de carregamento se o usuário ou projeto não carregou ---
   if (!loggedInUser || (id && !projectData.id)) { // Se é edição e projectData ainda não carregou
     return (
       <Container maxWidth="md">

@@ -22,12 +22,12 @@ import logoImage from '../assets/logo2.png';
 const LoginContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   width: '400px',
-  height: '100vh',
+  height: '100vh', // Ocupa a altura total da viewport
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  justifyContent: 'center', // Centraliza o conteúdo verticalmente
   boxShadow: theme.shadows[3],
-  borderRadius: 0,
+  borderRadius: 0, // Sem bordas arredondadas para ocupar a lateral
 }));
 
 const LogoText = styled(Typography)(({ theme }) => ({
@@ -69,8 +69,8 @@ export const Login: React.FC = () => {
 
   const [emailError, setEmailError] = useState(false);
   const [emailHelperText, setEmailHelperText] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordHelperText, setPasswordHelperText] = useState('');
+  const [passwordError, setPasswordError] = useState(false); // NOVO: Estado para erro de senha
+  const [passwordHelperText, setPasswordHelperText] = useState(''); // NOVO: Estado para helper de senha
 
 
   const validateEmail = (email: string) => {
@@ -87,7 +87,7 @@ export const Login: React.FC = () => {
       setEmailError(false);
       setEmailHelperText('');
     }
-    if (name === 'password') {
+    if (name === 'password') { // NOVO: Limpa erro de senha ao digitar
       setPasswordError(false);
       setPasswordHelperText('');
     }
@@ -123,9 +123,9 @@ export const Login: React.FC = () => {
     } else {
       // Login falhou
       setEmailError(true);
-      setPasswordError(true);
+      setPasswordError(true); // NOVO: Ativa erro para o campo de senha também
       setEmailHelperText('E-mail ou senha incorretos.');
-      setPasswordHelperText('E-mail ou senha incorretos.');
+      setPasswordHelperText('E-mail ou senha incorretos.'); // NOVO: Mensagem de erro para senha
       console.log('Falha no login: credenciais inválidas.');
       alert('E-mail ou senha incorretos. Tente novamente.'); // Feedback ao usuário
     }
@@ -135,25 +135,31 @@ export const Login: React.FC = () => {
   return (
     <Box sx={{
       display: 'flex',
-      height: '100vh',
+      height: '100vh', // Garante que a box principal ocupe toda a altura da viewport
     }}>
+      {/* Box para a imagem de fundo (lado esquerdo) */}
       <Box sx={{
-        flex: 1,
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        flex: 1, // Ocupa o espaço restante
+        backgroundImage: `url(${backgroundImage})`, // Usa a imagem importada
+        backgroundSize: 'cover', // Garante que a imagem cubra toda a área
+        backgroundPosition: 'center', // Centraliza a imagem
+        backgroundRepeat: 'no-repeat', // Impede a repetição da imagem
       }} />
 
+      {/* Box que contém o formulário de login (lado direito) */}
       <Box sx={{
-        width: '400px',
-        flexShrink: 0,
+        width: '400px', // Largura fixa para o formulário
+        flexShrink: 0, // Não permite que esta box encolha
       }}>
         <form onSubmit={handleSubmit}>
           <LoginContainer>
+            {/* --- Box para a logo --- */}
             <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
               <img src={logoImage} alt="Logo StudyFlow" height="300" />
             </Box>
+
+            {/* Opcional: Se você quiser manter o texto 'StudyFlow' junto com a logo, descomente a linha abaixo */}
+            {/* <LogoText>StudyFlow</LogoText> */}
 
             <StyledTextField
               fullWidth
@@ -178,8 +184,8 @@ export const Login: React.FC = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              error={passwordError}
-              helperText={passwordHelperText}
+              error={passwordError} // NOVO: Ativa o estilo de erro
+              helperText={passwordHelperText} // NOVO: Exibe a mensagem de erro
             />
 
             <LoginButton

@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// Corrigir importação: A interface User deve vir do seu arquivo de tipagem
-import { User } from '../types/types';
+import { User } from '../types/types'; // <-- Importar a interface 'User' do types.ts
 import {
   Box,
   Button,
@@ -16,7 +15,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-// --- Styled Components (mantidos do seu código) ---
+// --- Styled Components ---
 const ProfileContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   maxWidth: 600,
@@ -43,6 +42,7 @@ export const EditProfile: React.FC = () => {
   });
 
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
 
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -56,15 +56,14 @@ export const EditProfile: React.FC = () => {
 
     if (storedLoggedInUser) {
       try {
-        // --- PONTO DE CORREÇÃO ---
-        // Parseia e faz a asserção de tipo aqui.
-        // O TypeScript agora confia que parsedUser é do tipo User dentro deste bloco try.
-        const parsedUser: User = JSON.parse(storedLoggedInUser);
+        // --- PONTO DE CORREÇÃO: Parseia e faz a asserção de tipo aqui ---
+        // A linha abaixo garante que 'parsedUser' é do tipo 'User'.
+        const parsedUser: User = JSON.parse(storedLoggedInUser); // <-- ESSA É A LINHA CHAVE DA CORREÇÃO
         
-        currentUser = parsedUser; // Atribui à variável 'currentUser' para uso posterior
-        setLoggedInUser(parsedUser); // Atualiza o estado do usuário logado
+        currentUser = parsedUser; // Atribui à variável 'currentUser' para uso posterior no useEffect
+        setLoggedInUser(parsedUser); // Atualiza o estado 'loggedInUser'
 
-        // Agora, 'parsedUser' é definitivamente 'User', então não há erro de nulidade
+        // Agora, 'parsedUser' é definitivamente 'User', então não há erro de nulidade aqui
         setUserData({
           id: parsedUser.id,
           firstName: parsedUser.firstName,
@@ -76,7 +75,7 @@ export const EditProfile: React.FC = () => {
 
       } catch (e) {
         console.error("EditProfile: ERRO ao parsear loggedInUser do localStorage.", e);
-        navigate('/');
+        navigate('/'); // Redireciona se os dados estiverem corrompidos
         return; // Sai do useEffect
       }
     } else {
@@ -155,6 +154,8 @@ export const EditProfile: React.FC = () => {
     const storedUsers = localStorage.getItem('users');
     let users: User[] = storedUsers ? JSON.parse(storedUsers) : [];
 
+    // O 'loggedInUser' do estado já é o usuário atual que está logado.
+    // Usaremos ele como base para 'currentUserInLS' para tipagem clara.
     const currentUserInLS = users.find(u => u.id === loggedInUser.id);
 
     if (currentUserInLS) {
@@ -207,6 +208,7 @@ export const EditProfile: React.FC = () => {
                 sx={{ width: 100, height: 100, fontSize: '2.5rem' }}
                 src={profilePicture || undefined} alt="Foto de perfil"
               >
+                {/* Exibe a primeira letra do nome se não houver foto de perfil */}
                 {!profilePicture && userData.firstName ? userData.firstName.charAt(0).toUpperCase() : ''}
               </Avatar>
             </Box>

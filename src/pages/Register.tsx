@@ -81,11 +81,11 @@ const Register: React.FC = () => {
     return emailRegex.test(email);
   };
 
-  // --- Correção: Tipagem do 'prev' no handleChange ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev: RegisterFormData) => ({ ...prev, [name]: value })); // <-- 'prev' tipado como RegisterFormData
+    setFormData((prev: RegisterFormData) => ({ ...prev, [name]: value })); // <-- 'prev' tipado
 
+    // Validação de email em tempo real
     if (name === 'email') {
       if (value === '') {
         setEmailError(false);
@@ -99,6 +99,7 @@ const Register: React.FC = () => {
       }
     }
 
+    // Validação de senhas em tempo real
     if (name === 'password' || name === 'confirmPassword') {
       const newPassword = name === 'password' ? value : formData.password;
       const newConfirmPassword = name === 'confirmPassword' ? value : formData.confirmPassword;
@@ -166,9 +167,7 @@ const Register: React.FC = () => {
 
     console.log('Usuário registrado:', newUser);
     // Após o cadastro, redirecionar para a tela de Login
-    // Correção: Se a rota raiz '/' agora é o login, então navigate('/') está correto.
-    // Se '/login' é o caminho explícito para o login, use-o para maior clareza.
-    navigate('/'); // <-- Alterei para '/' para ser explícito, como no seu Login.tsx
+    navigate('/'); // Redireciona explicitamente para /
     alert('Cadastro realizado com sucesso! Faça login.'); // Feedback para o usuário
   };
 
@@ -190,99 +189,54 @@ const Register: React.FC = () => {
         flexShrink: 0,
       }}>
         <form onSubmit={handleSubmit}>
-          <AuthContainer>
+          <AuthContainer> {/* Usa o AuthContainer estilizado */}
+            {/* --- Box para a logo --- */}
             <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
-              <img src={logoImage} alt="Logo StudyFlow" height="150" />
+              <img src={logoImage} alt="Logo StudyFlow" height="150" /> {/* Ajuste a altura */}
             </Box>
-
+            {/* --- Título do Cadastro --- */}
             <LogoText>Cadastro</LogoText>
 
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Nome"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
+              fullWidth margin="normal" label="Nome" name="firstName"
+              value={formData.firstName} onChange={handleChange} required
             />
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Sobrenome"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
+              fullWidth margin="normal" label="Sobrenome" name="lastName"
+              value={formData.lastName} onChange={handleChange} required
             />
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              error={emailError}
-              helperText={emailHelperText}
+              fullWidth margin="normal" label="Email" name="email" type="email"
+              value={formData.email} onChange={handleChange} required
+              error={emailError} helperText={emailHelperText}
             />
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Telefone"
-              name="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={handleChange}
+              fullWidth margin="normal" label="Telefone" name="phone" type="tel"
+              value={formData.phone} onChange={handleChange}
             />
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Senha"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              error={passwordMatchError}
-              helperText={passwordMatchHelperText}
+              fullWidth margin="normal" label="Senha" name="password" type="password"
+              value={formData.password} onChange={handleChange} required
+              error={passwordMatchError} helperText={passwordMatchHelperText}
             />
             <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Confirmar Senha"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              error={passwordMatchError}
-              helperText={passwordMatchHelperText}
+              fullWidth margin="normal" label="Confirmar Senha" name="confirmPassword" type="password"
+              value={formData.confirmPassword} onChange={handleChange} required
+              error={passwordMatchError} helperText={passwordMatchHelperText}
             />
 
             <AuthButton
-              fullWidth
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
+              fullWidth type="submit" variant="contained" color="primary" size="large"
             >
               Cadastrar
             </AuthButton>
 
-            <DividerWithText>já tem conta?</DividerWithText>
+            <DividerWithText>já tem conta?</DividerWithText> {/* Divisor */}
 
             <Button
-              fullWidth
-              variant="outlined"
-              color="primary"
-              size="large"
-              sx={{
-                borderRadius: '4px',
-                fontWeight: 600,
-              }}
-              onClick={() => navigate('/')} // <-- Correção: usar '/login' de forma explícita
+              fullWidth variant="outlined" color="primary" size="large"
+              sx={{ borderRadius: '4px', fontWeight: 600, }}
+              onClick={() => navigate('/')} // <-- Correção: usar '/' de forma explícita
             >
               Fazer Login
             </Button>
