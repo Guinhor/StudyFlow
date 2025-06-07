@@ -1,8 +1,7 @@
 // src/pages/Home.tsx
 
 import React, { useState, useEffect } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useNavigate, useLocation } from 'react-router-dom'; // useLocation pode ser removido se não houver uso futuro
+import { useNavigate, useLocation } from 'react-router-dom'; // useLocation pode ser removido se não for mais usado
 import {
   Box,
   Button,
@@ -16,7 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  CircularProgress, // <-- Importado CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -25,7 +24,7 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-import { Project, User } from '../types/types'; // <-- CRUCIAL: Importar Project e User do types.ts
+import { Project, User } from '../types/types'; // Importar Project e User do types.ts
 
 const ProjectCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -47,22 +46,19 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
   // const location = useLocation(); // Comente ou remova se não for mais usar para location.state
 
-  const [projects, setProjects] = useState<Project[]>([]); // Não inicializa mais do localStorage diretamente aqui
+  const [projects, setProjects] = useState<Project[]>([]);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
-  // --- Estados para usuário logado e carregamento ---
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Começa como true enquanto carrega os dados
-  // --- Fim dos novos estados ---
+  const [loading, setLoading] = useState(true);
 
-  // --- useEffect para carregar dados do usuário logado e projetos ---
   useEffect(() => {
     const storedLoggedInUser = localStorage.getItem('loggedInUser');
     if (storedLoggedInUser) {
       try {
         const user: User = JSON.parse(storedLoggedInUser);
-        setLoggedInUser(user); // Define o usuário logado
+        setLoggedInUser(user);
 
         const storedProjects = localStorage.getItem('projects');
         if (storedProjects) {
@@ -75,24 +71,13 @@ export const Home: React.FC = () => {
         }
       } catch (e) {
         console.error("Erro ao parsear loggedInUser ou projetos no Home:", e);
-        navigate('/'); // <-- Redireciona para /login (consistente com o App.tsx)
+        navigate('/login'); // Redireciona se os dados estiverem corrompidos
       }
     } else {
-      navigate('/'); // <-- Redireciona para o login se não houver usuário logado
+      navigate('/login'); // Redireciona para o login se não houver usuário logado
     }
     setLoading(false); // Conclui o carregamento, independentemente do sucesso
-  }, [navigate]); // navigate como dependência
-
-  // O useEffect abaixo foi removido (era do 'location.state' para newProject)
-  // useEffect(() => {
-  //   const newProject = location.state?.newProject;
-  //   if (newProject) {
-  //     const updatedProjects = [...projects, newProject];
-  //     setProjects(updatedProjects);
-  //     localStorage.setItem('projects', JSON.stringify(updatedProjects));
-  //     window.history.replaceState({}, document.title);
-  //   }
-  // }, [location.state]);
+  }, [navigate]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -138,6 +123,12 @@ export const Home: React.FC = () => {
     setOpenDeleteDialog(false);
     setProjectToDelete(null);
   };
+
+  // --- NOVO: Função para navegar para a página de chat ---
+  const handleGoToChat = (projectId: string) => {
+    navigate(`/chat/${projectId}`); // Navega para a nova rota de chat com o ID do projeto
+  };
+  // --- Fim da nova função ---
 
   // --- Exibir estado de carregamento ---
   if (loading || !loggedInUser) {
@@ -241,6 +232,15 @@ export const Home: React.FC = () => {
                   >
                     Editar
                   </Button>
+                  {/* --- NOVO BOTÃO: Conversar --- */}
+                  <Button
+                    size="small"
+                    color="primary" // Você pode escolher outra cor se quiser
+                    onClick={() => handleGoToChat(project.id)} // Chama a função para navegar para o chat
+                  >
+                    Conversar
+                  </Button>
+                  {/* --- Fim do NOVO BOTÃO --- */}
                   <Button
                     size="small"
                     color="error"

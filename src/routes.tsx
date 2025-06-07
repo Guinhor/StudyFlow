@@ -1,3 +1,5 @@
+// src/router.tsx (or wherever your routeElements array is defined)
+
 import { lazy, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 
@@ -7,24 +9,32 @@ const Register = lazy(() => import('./pages/Register'));
 const NewProject = lazy(() => import('./pages/NewProject'));
 const EditProject = lazy(() => import('./pages/EditProject'));
 const EditProfile = lazy(() => import('./pages/EditProfile'));
+const ChatPage = lazy(() => import('./pages/ChatPage')); // <-- NEW: Import ChatPage
 
 export const routeElements = [
   {
-    // Esta será a rota padrão para a URL raiz ('/')
     index: true,
     element: (
       <Suspense fallback={<LoadingSpinner />}>
-        <Login /> {/* <-- A tela de Login é a inicial */}
+        <Login />
       </Suspense>
-    )
+    ),
   },
   {
-    path: 'home', // <-- Adicionamos um caminho explícito para a Home
+    path: 'login',
+    element: (
+      <Suspense fallback={<LoadingSpinner />}>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: 'home',
     element: (
       <Suspense fallback={<LoadingSpinner />}>
         <Home />
       </Suspense>
-    )
+    ),
   },
   {
     path: 'register',
@@ -32,7 +42,7 @@ export const routeElements = [
       <Suspense fallback={<LoadingSpinner />}>
         <Register />
       </Suspense>
-    )
+    ),
   },
   {
     path: 'new-project',
@@ -40,7 +50,7 @@ export const routeElements = [
       <Suspense fallback={<LoadingSpinner />}>
         <NewProject />
       </Suspense>
-    )
+    ),
   },
   {
     path: 'edit-project/:id',
@@ -48,7 +58,7 @@ export const routeElements = [
       <Suspense fallback={<LoadingSpinner />}>
         <EditProject />
       </Suspense>
-    )
+    ),
   },
   {
     path: 'edit-profile',
@@ -56,6 +66,14 @@ export const routeElements = [
       <Suspense fallback={<LoadingSpinner />}>
         <EditProfile />
       </Suspense>
-    )
-  }
+    ),
+  },
+  {
+    path: 'chat/:id', // <-- NEW ROUTE: For the chat page, with project ID
+    element: (
+      <Suspense fallback={<LoadingSpinner />}>
+        <ChatPage />
+      </Suspense>
+    ),
+  },
 ];
