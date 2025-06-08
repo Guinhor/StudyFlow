@@ -30,6 +30,7 @@ const LoginContainer = styled(Paper)(({ theme }) => ({
   borderRadius: 0, // Sem bordas arredondadas para ocupar a lateral
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LogoText = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '2rem',
